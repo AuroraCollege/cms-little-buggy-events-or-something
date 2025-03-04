@@ -26,6 +26,15 @@ def add():
         return redirect(url_for('index'))
     return render_template('add.html')
 
+@app.route('/delete', methods=['GET', 'POST'])
+def delete():
+    if request.method == 'POST':
+        reason = request.form['reason']
+        db.session.remove(reason)
+        db.session.commit()
+        return redirect(url_for('index'))
+    return render_template('index.html')
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
