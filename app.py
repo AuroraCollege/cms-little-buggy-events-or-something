@@ -1,5 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, request
 from flask_sqlalchemy import SQLAlchemy
+import sqlalchemy
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///cms.db'
@@ -25,6 +26,15 @@ def add():
         db.session.commit()
         return redirect(url_for('index'))
     return render_template('add.html')
+
+@app.route('/edit', methods=['GET', 'POST'])
+def edit():
+    if request.method == 'POST':
+        Content.title = request.form['title']
+        Content.body = request.form['body']
+        db.session.commit()
+        return redirect(url_for('index'))
+    return render_template('edit.html')
 
 if __name__ == '__main__':
     with app.app_context():
