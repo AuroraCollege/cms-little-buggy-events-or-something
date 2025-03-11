@@ -1,6 +1,7 @@
 from flask import Flask, render_template, redirect, url_for, request
 from flask_sqlalchemy import SQLAlchemy
 import sqlalchemy
+import jsonify
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///cms.db'
@@ -27,14 +28,16 @@ def add():
         return redirect(url_for('index'))
     return render_template('add.html')
 
-@app.route('/delete', methods=['GET', 'POST'])
+@app.route('/delete', methods=['GET'])
 def delete():
-    if request.method == 'POST':
-        reason = request.form['reason']
-        db.session.remove(reason)
+    try:
+        for loop in cms.db:
+            db.session.execute(f"DELETE FROM {cms.db}")
         db.session.commit()
-        return redirect(url_for('index'))
-    return render_template('index.html')
+        return jsonify({"message": "Database cleared successfuly."}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": f"Error: {str(e)}"}), 500
 
 @app.route('/edit', methods=['GET', 'POST'])
 def edit():
