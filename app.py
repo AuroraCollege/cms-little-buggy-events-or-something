@@ -27,6 +27,15 @@ def add():
         return redirect(url_for('index'))
     return render_template('add.html')
 
+@app.route('/delete', methods=['GET', 'POST'])
+def delete():
+    if request.method == 'POST':
+        reason = request.form['reason']
+        db.session.remove(reason)
+        db.session.commit()
+        return redirect(url_for('index'))
+    return render_template('index.html')
+
 @app.route('/edit', methods=['GET', 'POST'])
 def edit():
     if request.method == 'POST':
